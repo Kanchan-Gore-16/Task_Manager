@@ -20,7 +20,7 @@ export const getTask = async (req, res, next) => {
 
 export const getTaskById = async (req, res, next) => {
   try {
-    const task = await taskService.getTaskById(req.body);
+    const task = await taskService.getTaskById(req.params.id);
     res.status(200).json(task);
   } catch (error) {
     next(error);
