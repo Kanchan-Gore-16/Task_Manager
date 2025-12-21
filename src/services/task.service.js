@@ -40,7 +40,6 @@ export const createTask = async (data) => {
   return task;
 };
 
-/* ---------- Get Tasks ---------- */
 export const getTasks = async ({
   status,
   category,
@@ -63,7 +62,6 @@ export const getTasks = async ({
   return data;
 };
 
-/* ---------- Get Task By ID ---------- */
 export const getTaskById = async (id) => {
   const { data: task, error } = await supabase
     .from("tasks")
@@ -82,7 +80,6 @@ export const getTaskById = async (id) => {
   return { ...task, history };
 };
 
-/* ---------- Update Task ---------- */
 export const updateTask = async (id, updates) => {
   const { data: oldTask } = await supabase
     .from("tasks")
@@ -111,7 +108,6 @@ export const updateTask = async (id, updates) => {
   return updatedTask;
 };
 
-/* ---------- Delete Task ---------- */
 export const deleteTask = async (id) => {
   await supabase.from("task_history").delete().eq("task_id", id);
 
