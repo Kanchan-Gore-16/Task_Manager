@@ -8,7 +8,10 @@ const errHandler = (err, req, res, next) => {
 
   res
     .status(err.statusCode || 500)
-    .json({ success: false, message: err.message || "internal server error" });
+    .json({
+      success: false,
+      message: err.message || "internal server error ...",
+    });
 };
 
 export default errHandler;

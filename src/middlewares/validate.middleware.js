@@ -1,14 +1,18 @@
-import { success } from "zod";
+import { ZodError } from "zod";
 
 const validate = (schema) => (req, res, next) => {
   try {
     schema.parse(req.body);
     next();
   } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: error.errors.map((err) => err.message),
-    });
+    if (error instanceof ZodError) {
+      return res.status(400).json({
+        success: false,
+        message: error.issues.map((issue) => issue.message),
+      });
+    }
+
+    next(error); // fallback to global error handler
   }
 };
 
