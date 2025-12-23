@@ -1,13 +1,13 @@
 const CATEGORY_KEYWORD = {
   scheduling: ["meeting", "schedule", "call", "appointment", "deadline"],
-  finaance: ["payment", "invoice", "bill", "budget", "cost", "expense"],
+  finance: ["payment", "invoice", "bill", "budget", "cost", "expense"],
   technical: ["bug", "fix", "error", "install", "repair", "maintain"],
   safety: ["safety", "hazard", "inspection", "compliance", "ppe"],
 };
 
 const PRIORITY_KEYWORDS = {
-  high: ["urgent", "asap", "immediately", "today", "critical", "emergency"],
-  mediun: ["soon", "this week", "important"],
+  high: ["urgent", "asap", "immediately", "critical", "emergency"],
+  medium: ["today", "soon", "this week", "important"],
 };
 
 const ACTIONS_BY_CATEGORY = {
@@ -38,17 +38,23 @@ const ACTIONS_BY_CATEGORY = {
   general: [],
 };
 
-const normalizeText = (text = "") => text.toLocaleLowerCase();
+const normalizeText = (text = "") => text.toLowerCase();
 
 export function detectCategory(text) {
   const normalized = normalizeText(text);
+  let bestCategory = "general";
+  let maxScore = 0;
 
-  for (const category in CATEGORY_KEYWORD) {
-    if (CATEGORY_KEYWORD[category].some((k) => normalized.includes(k))) {
-      return category;
+  for (const [category, keywords] of Object.entries(CATEGORY_KEYWORD)) {
+    const score = keywords.filter((k) => normalized.includes(k)).length;
+
+    if (score > maxScore) {
+      maxScore = score;
+      bestCategory = category;
     }
   }
-  return "general";
+
+  return { category: bestCategory, score: maxScore };
 }
 
 export function detectPriority(text) {
@@ -67,14 +73,20 @@ export function detectPriority(text) {
 export function extractEntities(text = "") {
   const entities = {};
 
-  if (text.match(/\btoday\b/i)) entities.date = "today";
-  if (text.match(/\btomorrow\b/i)) entities.date = "tomorrow";
+  if (/\btoday\b/i.test(text)) entities.date = "today";
+  if (/\btomorrow\b/i.test(text)) entities.date = "tomorrow";
+  if (/\bnext week\b/i.test(text)) entities.date = "next week";
 
-  const personMatch = text.match(/\b(with|by|assign to)\s+([A-Za-z]+)/i);
+  const personMatch = text.match(
+    /\b(assign(?:ed)? to|with|by)\s+([A-Za-z]+(?:\s[A-Za-z]+)?)/i
+  );
   if (personMatch) entities.person = personMatch[2];
 
-  const locationMatch = text.match(/\b(at|in)\s+([A-Za-z]+)/i);
+  const locationMatch = text.match(/\b(at|in)\s+([A-Za-z]+(?:\s[A-Za-z]+)?)/i);
   if (locationMatch) entities.location = locationMatch[2];
+
+  const verbs = ["schedule", "fix", "inspect", "pay", "review", "call", "meet"];
+  entities.actions = verbs.filter((v) => normalizeText(text).includes(v));
 
   return entities;
 }
@@ -86,15 +98,20 @@ export function suggestActions(category) {
 export function classifyTask(title = "", description = "") {
   const combinedText = `${title} ${description}`;
 
-  const category = detectCategory(combinedText);
+  const categoryResult = detectCategory(combinedText);
   const priority = detectPriority(combinedText);
   const extracted_entities = extractEntities(combinedText);
-  const suggested_actions = suggestActions(category);
+  const suggested_actions = suggestActions(categoryResult.category);
 
   return {
-    category,
+    category: categoryResult.category,
     priority,
     extracted_entities,
     suggested_actions,
+    metadata: {
+      category_score: categoryResult.score,
+      priority_reason:
+        priority !== "low" ? "Urgency keyword detected" : " No Urgency keyword",
+    },
   };
 }
