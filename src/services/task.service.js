@@ -8,6 +8,11 @@ export const createTask = async (data) => {
     throw new Error("Title and description are required");
   }
 
+  const safeAssignedTo = assigned_to || null;
+
+  const safeDueDate = due_date
+    ? new Date(due_date).toISOString().split("T")[0]
+    : null;
   const classification = classifyTask(title, description);
 
   const { data: task, error } = await supabase
@@ -16,8 +21,8 @@ export const createTask = async (data) => {
       {
         title,
         description,
-        assigned_to,
-        due_date,
+        assigned_to: safeAssignedTo,
+        due_date: safeDueDate,
         category: classification.category,
         priority: classification.priority,
         extracted_entities: classification.extracted_entities,
