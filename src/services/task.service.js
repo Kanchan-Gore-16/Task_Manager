@@ -25,8 +25,8 @@ export const createTask = async (data) => {
         due_date: safeDueDate,
         category: classification.category,
         priority: classification.priority,
-        extracted_entities: classification.extracted_entities,
-        suggested_actions: classification.suggested_actions,
+        extracted_entities: classification.extracted_entities || [],
+        suggested_actions: classification.suggested_actions || {},
       },
     ])
     .select()
