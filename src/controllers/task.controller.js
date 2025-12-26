@@ -11,7 +11,7 @@ export const createTask = async (req, res, next) => {
 
 export const getTask = async (req, res, next) => {
   try {
-    const task = await taskService.getTasks(req.body);
+    const task = await taskService.getTasks({ ...req.body, ...req.query });
     res.status(200).json(task);
   } catch (error) {
     next(error);
