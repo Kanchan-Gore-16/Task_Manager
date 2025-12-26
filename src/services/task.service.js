@@ -1,8 +1,8 @@
 import { supabase } from "../config/supabase.js";
 import { classifyTask } from "../utils/classifier.js";
 
-export const createTask = async (data) => {
-  const { title, description, assigned_to, due_date } = data;
+export const createTask = async (reqData) => {
+  const { title, description, assigned_to, due_date } = reqData;
 
   if (!title || !description) {
     throw new Error("Title and description are required");
@@ -15,18 +15,21 @@ export const createTask = async (data) => {
     : null;
   const classification = classifyTask(title, description);
 
-  const { data, error } = await supabase.from("tasks").insert([
-    {
-      title,
-      description,
-      assigned_to: safeAssignedTo,
-      due_date: safeDueDate,
-      category: classification.category,
-      priority: classification.priority,
-      extracted_entities: classification.extracted_entities || {},
-      suggested_actions: classification.suggested_actions || {},
-    },
-  ]);
+  const { data, error } = await supabase
+    .from("tasks")
+    .insert([
+      {
+        title,
+        description,
+        assigned_to: safeAssignedTo,
+        due_date: safeDueDate,
+        category: classification.category,
+        priority: classification.priority,
+        extracted_entities: classification.extracted_entities || {},
+        suggested_actions: classification.suggested_actions || {},
+      },
+    ])
+    .select();
   if (error) {
     console.error("SUPABASE ERROR:", error);
     throw error;
