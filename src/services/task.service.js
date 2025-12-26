@@ -15,7 +15,7 @@ export const createTask = async (data) => {
     : null;
   const classification = classifyTask(title, description);
 
-  const { data: error } = await supabase.from("tasks").insert([
+  const { data, error } = await supabase.from("tasks").insert([
     {
       title,
       description,
@@ -23,7 +23,7 @@ export const createTask = async (data) => {
       due_date: safeDueDate,
       category: classification.category,
       priority: classification.priority,
-      extracted_entities: classification.extracted_entities || [],
+      extracted_entities: classification.extracted_entities || {},
       suggested_actions: classification.suggested_actions || {},
     },
   ]);
