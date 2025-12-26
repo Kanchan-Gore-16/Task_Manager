@@ -34,13 +34,13 @@ export const createTask = async (data) => {
 
   const task = data?.[0];
 
-  // await supabase.from("task_history").insert([
-  //   {
-  //     task_id: task.id,
-  //     action: "created",
-  //     new_value: task,
-  //   },
-  // ]);
+  await supabase.from("task_history").insert([
+    {
+      task_id: task.id,
+      action: "created",
+      new_value: task,
+    },
+  ]);
 
   return task;
 };
