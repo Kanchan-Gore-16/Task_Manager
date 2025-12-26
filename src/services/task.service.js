@@ -30,6 +30,7 @@ export const createTask = async (reqData) => {
       },
     ])
     .select();
+
   if (error) {
     console.error("SUPABASE ERROR:", error);
     throw error;
@@ -52,22 +53,63 @@ export const getTasks = async ({
   status,
   category,
   priority,
+  search,
   limit = 10,
   offset = 0,
 }) => {
-  let query = supabase.from("tasks").select("*");
+  const from = Number(offset);
+  const to = from + Number(limit) - 1;
+
+  let query = supabase
+    .from("tasks")
+    .select("*", { count: "exact" })
+    .order("created_at", { ascending: false });
 
   if (status) query = query.eq("status", status);
   if (category) query = query.eq("category", category);
   if (priority) query = query.eq("priority", priority);
 
-  const { data, error } = await query
-    .range(Number(offset), Number(offset) + Number(limit) - 1)
-    .order("created_at", { ascending: false });
+  if (search) {
+    query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%`);
+  }
 
+  const { data, error, count } = await query.range(from, to);
   if (error) throw error;
 
-  return data;
+  const statuses = ["pending", "in_progress", "completed"];
+  const summary = { pending: 0, in_progress: 0, completed: 0 };
+
+  await Promise.all(
+    statuses.map(async (s) => {
+      let q = supabase
+        .from("tasks")
+        .select("*", { count: "exact", head: true })
+        .eq("status", s);
+
+      if (category) q = q.eq("category", category);
+      if (priority) q = q.eq("priority", priority);
+
+      if (search) {
+        q = q.or(`title.ilike.%${search}%,description.ilike.%${search}%`);
+      }
+
+      const { count, error } = await q;
+      if (error) throw error;
+
+      summary[s] = count;
+    })
+  );
+
+  return {
+    data,
+    meta: {
+      total: count,
+      limit,
+      offset,
+      hasMore: from + limit < count,
+    },
+    summary,
+  };
 };
 
 export const getTaskById = async (id) => {
