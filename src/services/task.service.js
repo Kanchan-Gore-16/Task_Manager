@@ -106,7 +106,7 @@ export const getTasks = async ({
       total: count,
       limit,
       offset,
-      hasMore: from + limit < count,
+      hasMore: from + Number(limit) < count,
     },
     summary,
   };
