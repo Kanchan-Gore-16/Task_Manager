@@ -15,24 +15,24 @@ export const createTask = async (data) => {
     : null;
   const classification = classifyTask(title, description);
 
-  const { data: task, error } = await supabase
-    .from("tasks")
-    .insert([
-      {
-        title,
-        description,
-        assigned_to: safeAssignedTo,
-        due_date: safeDueDate,
-        category: classification.category,
-        priority: classification.priority,
-        extracted_entities: classification.extracted_entities || [],
-        suggested_actions: classification.suggested_actions || {},
-      },
-    ])
-    .select()
-    .single();
+  const { data: error } = await supabase.from("tasks").insert([
+    {
+      title,
+      description,
+      assigned_to: safeAssignedTo,
+      due_date: safeDueDate,
+      category: classification.category,
+      priority: classification.priority,
+      extracted_entities: classification.extracted_entities || [],
+      suggested_actions: classification.suggested_actions || {},
+    },
+  ]);
+  if (error) {
+    console.error("SUPABASE ERROR:", error);
+    throw error;
+  }
 
-  if (error) throw error;
+  const task = data?.[0];
 
   await supabase.from("task_history").insert([
     {
