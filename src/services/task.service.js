@@ -65,9 +65,9 @@ export const getTasks = async ({
     .select("*", { count: "exact" })
     .order("created_at", { ascending: false });
 
-  if (status) query = query.eq("status", status);
-  if (category) query = query.eq("category", category);
-  if (priority) query = query.eq("priority", priority);
+  if (status) query = query.eq("status", status.toLowerCase());
+  if (category) query = query.eq("category", category.toLowerCase());
+  if (priority) query = query.eq("priority", priority.toLowerCase());
 
   if (search) {
     query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%`);
