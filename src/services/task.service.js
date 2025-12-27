@@ -86,8 +86,8 @@ export const getTasks = async ({
         .select("*", { count: "exact", head: true })
         .eq("status", s);
 
-      if (category) q = q.eq("category", category);
-      if (priority) q = q.eq("priority", priority);
+      if (category) q = q.eq("category", category.toLowerCase());
+      if (priority) q = q.eq("priority", priority.toLowerCase());
 
       if (search) {
         q = q.or(`title.ilike.%${search}%,description.ilike.%${search}%`);
