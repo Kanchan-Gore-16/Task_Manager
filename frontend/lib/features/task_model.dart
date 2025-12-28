@@ -1,3 +1,4 @@
+// Task data model
 class Task {
   final String id;
   final String title;
@@ -19,6 +20,7 @@ class Task {
     required this.dueDate,
   });
 
+  // Create Task instance from API response JSON
   factory Task.fromJson(Map<String, dynamic> json) {
     return Task(
       id: json['id'],

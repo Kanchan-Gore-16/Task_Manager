@@ -466,13 +466,20 @@ You can:
 ![Create Task](screenshots/create_task.jpeg)
 
 ### Edit Task
-
+    
 ![Edit Task](screenshots/edit_task.jpeg)
 
 ### Swipe to Delete
 
 ![Swipe Delete](screenshots/swipe_delete.jpeg)
 
+### Offline indicator
+
+![Offline Indicator](screenshots/offline_indicator_when_offline.jpg)
+
+### Online indicator
+
+![Online Indicator](screenshots/offline_indicator_when_online.jpg)
 ---
 
 # 7. Architecture Decisions
@@ -483,6 +490,7 @@ You can:
 - Riverpod state management to keep pagination, filters, and counts consistent
 - Skeleton loading instead of spinners for better UX
 - Swipe‑to‑delete + confirmation to prevent accidental deletion
+- API calls are blocked when offline and errors are hidden from users.
 
 ---
 

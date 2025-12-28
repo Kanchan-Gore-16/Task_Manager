@@ -42,6 +42,7 @@ class TaskFilterState {
   }
 }
 
+// Provider managing task filter state
 final taskFilterProvider =
     StateNotifierProvider<TaskFilterNotifier, TaskFilterState>((ref) {
       return TaskFilterNotifier();
@@ -71,6 +72,7 @@ class TaskFilterNotifier extends StateNotifier<TaskFilterState> {
   }
 }
 
+// Providers exposing filter options to UI
 final categoryProvider = Provider<List<String>>((ref) => categoryList);
 final priorityProvider = Provider<List<String>>((ref) => priorityList);
 final statusProvider = Provider<List<String>>((ref) => statusList);

@@ -1,10 +1,12 @@
 import 'package:dio/dio.dart';
 
+// Handles all task-related API requests
 class TaskApi {
   final Dio dio;
 
   TaskApi(this.dio);
 
+  // Fetch tasks with filters, pagination, and optional summary
   Future<Map<String, dynamic>> fetchTasks({
     String? status,
     String? category,

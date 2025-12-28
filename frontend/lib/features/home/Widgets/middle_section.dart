@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_task_manager/features/home/Widgets/task_skeleton.dart';
 
 import '../../task_provider.dart';
-import '../task_filter_provider.dart';
+import '../../task_filter_provider.dart';
 import 'bottom_section.dart';
 
 class MiddleSection extends StatelessWidget {

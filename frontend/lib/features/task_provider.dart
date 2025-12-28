@@ -6,8 +6,9 @@ import 'package:smart_task_manager/features/task_api_provider.dart';
 import 'package:smart_task_manager/features/task_model.dart';
 
 import 'cors/connectivity_provider.dart';
-import 'home/task_filter_provider.dart';
+import 'task_filter_provider.dart';
 
+// Holds task list data, pagination info, loading & error states
 class TaskState {
   final List<Task> tasks;
   final Map<String, int> summary;
@@ -49,6 +50,7 @@ class TaskState {
   }
 }
 
+// Global provider managing task list, filters, pagination and API calls
 final taskProvider = StateNotifierProvider<TaskNotifier, TaskState>((ref) {
   final api = ref.watch(taskApiProvider);
   return TaskNotifier(ref, api);
@@ -61,7 +63,7 @@ class TaskNotifier extends StateNotifier<TaskState> {
   TaskNotifier(this.ref, this.api) : super(const TaskState()) {
     fetchTasks();
   }
-
+  // Next page
   void nextPage() {
     if (state.loading || !state.hasMore) return;
 
@@ -71,7 +73,7 @@ class TaskNotifier extends StateNotifier<TaskState> {
     );
   }
 
-  // ---------------- PREVIOUS PAGE ----------------
+  // Previous page
   void previousPage() {
     if (state.loading || state.offset == 0) return;
 
@@ -81,15 +83,17 @@ class TaskNotifier extends StateNotifier<TaskState> {
     );
   }
 
-  // ---------------- RESET PAGINATION ----------------
+  // Reset pagination
   void resetPagination() {
     fetchTasks(includeSummary: true, offsetOverride: 0);
   }
 
+  // Fetch tasks from API with filters, pagination and optional summary
   Future<void> fetchTasks({
     bool includeSummary = true,
     int? offsetOverride,
   }) async {
+    // Slip API call when device is offline
     final isOffline = ref.read(isOfflineProvider);
     if (isOffline) {
       state = state.copyWith(loading: false, error: null);
@@ -135,6 +139,7 @@ class TaskNotifier extends StateNotifier<TaskState> {
     }
   }
 
+  // Create a new task and refresh list
   Future<void> createTask({
     required String title,
     required String description,
@@ -154,6 +159,7 @@ class TaskNotifier extends StateNotifier<TaskState> {
     await fetchTasks();
   }
 
+  // Update existing task details
   Future<void> editTask({
     required String id,
     required String title,
@@ -180,6 +186,7 @@ class TaskNotifier extends StateNotifier<TaskState> {
     fetchTasks();
   }
 
+  // Delete task and reset pagination
   Future<void> deleteTask(String id) async {
     final isOffline = ref.read(isOfflineProvider);
     if (isOffline) return;

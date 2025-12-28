@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../task_provider.dart';
-import '../task_filter_provider.dart';
+import '../../task_filter_provider.dart';
 
 class TopSection extends ConsumerWidget {
   const TopSection({super.key});
