@@ -8,8 +8,10 @@ import {
   deleteTask,
 } from "../controllers/task.controller.js";
 
+//Request validation middleware
 import validate from "../middlewares/validate.middleware.js";
 
+//Zod schemas for task validation
 import {
   createTaskSchema,
   updateTaskSchema,
@@ -45,7 +47,7 @@ const router = express.Router();
  *         description: Task created successfully
  */
 
-router.post("/", validate(createTaskSchema), createTask);
+router.post("/", validate(createTaskSchema), createTask); //Create new task
 
 /**
  * @swagger
@@ -88,7 +90,7 @@ router.post("/", validate(createTaskSchema), createTask);
  *         description: List of tasks
  */
 
-router.get("/", getTask);
+router.get("/", getTask); //Fetch all tasks
 
 /**
  * @swagger
@@ -109,7 +111,7 @@ router.get("/", getTask);
  *       404:
  *         description: Task not found
  */
-router.get("/:id", getTaskById);
+router.get("/:id", getTaskById); //Fetch single task
 
 /**
  * @swagger
@@ -161,7 +163,7 @@ router.get("/:id", getTaskById);
  *       404:
  *         description: Task not found
  */
-router.patch("/:id", validate(updateTaskSchema), updateTask);
+router.patch("/:id", validate(updateTaskSchema), updateTask); //Update task
 
 /**
  * @swagger
@@ -184,6 +186,6 @@ router.patch("/:id", validate(updateTaskSchema), updateTask);
  *       404:
  *         description: Task not found
  */
-router.delete("/:id", deleteTask);
+router.delete("/:id", deleteTask); // Delete task
 
 export default router;

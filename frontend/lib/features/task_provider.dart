@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:smart_task_manager/features/task_api.dart';
@@ -90,7 +91,10 @@ class TaskNotifier extends StateNotifier<TaskState> {
     int? offsetOverride,
   }) async {
     final isOffline = ref.read(isOfflineProvider);
-    if (isOffline) return;
+    if (isOffline) {
+      state = state.copyWith(loading: false, error: null);
+      return;
+    }
 
     try {
       state = state.copyWith(loading: true, error: null);
@@ -124,6 +128,8 @@ class TaskNotifier extends StateNotifier<TaskState> {
         hasMore: meta['hasMore'] == true,
         loading: false,
       );
+    } on DioException catch (_) {
+      state = state.copyWith(loading: false, error: null);
     } catch (e) {
       state = state.copyWith(loading: false, error: e.toString());
     }

@@ -1,5 +1,6 @@
 import { ZodError } from "zod";
 
+// Middleware to validate request body using Zod schema
 const validate = (schema) => (req, res, next) => {
   try {
     schema.parse(req.body);
@@ -12,7 +13,7 @@ const validate = (schema) => (req, res, next) => {
       });
     }
 
-    next(error); // fallback to global error handler
+    next(error); // Forward unexpected errors to global handler
   }
 };
 

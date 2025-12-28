@@ -40,6 +40,7 @@ const ACTIONS_BY_CATEGORY = {
 
 const normalizeText = (text = "") => text.toLowerCase();
 
+//Detect task category based on keyword frequecy
 export function detectCategory(text) {
   const normalized = normalizeText(text);
   let bestCategory = "general";
@@ -57,6 +58,7 @@ export function detectCategory(text) {
   return { category: bestCategory, score: maxScore };
 }
 
+//Detect task priority using urgency keywords
 export function detectPriority(text) {
   const normalized = normalizeText(text);
 
@@ -70,6 +72,7 @@ export function detectPriority(text) {
   return "low";
 }
 
+// Extract entities like date, person, location and action
 export function extractEntities(text = "") {
   const entities = {};
 
@@ -95,6 +98,7 @@ export function suggestActions(category) {
   return ACTIONS_BY_CATEGORY[category] || [];
 }
 
+// Classify task using title and desciotion
 export function classifyTask(title = "", description = "") {
   const combinedText = `${title} ${description}`;
 

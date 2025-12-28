@@ -1,6 +1,7 @@
 import { supabase } from "../config/supabase.js";
 import { classifyTask } from "../utils/classifier.js";
 
+//Create a task with auto classification
 export const createTask = async (reqData) => {
   const { title, description, assigned_to, due_date } = reqData;
 
@@ -13,6 +14,7 @@ export const createTask = async (reqData) => {
   const safeDueDate = due_date
     ? new Date(due_date).toISOString().split("T")[0]
     : null;
+
   const classification = classifyTask(title, description);
 
   const { data, error } = await supabase
@@ -38,6 +40,7 @@ export const createTask = async (reqData) => {
 
   const task = data?.[0];
 
+  // Store task creation history
   await supabase.from("task_history").insert([
     {
       task_id: task.id,
@@ -49,6 +52,7 @@ export const createTask = async (reqData) => {
   return task;
 };
 
+// Fetch tasks with pagination, filters, search, and status summary
 export const getTasks = async ({
   status,
   category,
@@ -65,10 +69,12 @@ export const getTasks = async ({
     .select("*", { count: "exact" })
     .order("created_at", { ascending: false });
 
+  //filters if provided
   if (status) query = query.eq("status", status.toLowerCase());
   if (category) query = query.eq("category", category.toLowerCase());
   if (priority) query = query.eq("priority", priority.toLowerCase());
 
+  //search on title and description
   if (search) {
     query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%`);
   }
@@ -112,6 +118,7 @@ export const getTasks = async ({
   };
 };
 
+//Fetch single task with history
 export const getTaskById = async (id) => {
   const { data: task, error } = await supabase
     .from("tasks")
@@ -130,6 +137,7 @@ export const getTaskById = async (id) => {
   return { ...task, history };
 };
 
+//Update task and record change history
 export const updateTask = async (id, updates) => {
   const { data: oldTask } = await supabase
     .from("tasks")
@@ -158,6 +166,7 @@ export const updateTask = async (id, updates) => {
   return updatedTask;
 };
 
+//Delete task and its history
 export const deleteTask = async (id) => {
   await supabase.from("task_history").delete().eq("task_id", id);
 

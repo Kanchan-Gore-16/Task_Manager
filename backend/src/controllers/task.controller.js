@@ -1,14 +1,16 @@
 import * as taskService from "../services/task.service.js";
 
+// Create a new task
 export const createTask = async (req, res, next) => {
   try {
     const task = await taskService.createTask(req.body);
     res.status(201).json(task);
   } catch (error) {
-    next(error);
+    next(error); // Forward error to global error handler
   }
 };
 
+// Get tasks with filters, search, and pagination
 export const getTask = async (req, res, next) => {
   try {
     const task = await taskService.getTasks({ ...req.body, ...req.query });
@@ -18,6 +20,7 @@ export const getTask = async (req, res, next) => {
   }
 };
 
+// Get a single task by ID
 export const getTaskById = async (req, res, next) => {
   try {
     const task = await taskService.getTaskById(req.params.id);
@@ -27,6 +30,7 @@ export const getTaskById = async (req, res, next) => {
   }
 };
 
+// Update task details by ID
 export const updateTask = async (req, res, next) => {
   try {
     const task = await taskService.updateTask(req.params.id, req.body);
@@ -36,6 +40,7 @@ export const updateTask = async (req, res, next) => {
   }
 };
 
+// Delete a task by ID
 export const deleteTask = async (req, res, next) => {
   try {
     const task = await taskService.deleteTask(req.params.id);

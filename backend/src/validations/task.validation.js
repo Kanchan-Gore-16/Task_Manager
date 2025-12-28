@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+//schema for task creation request validation
 export const createTaskSchema = z.object({
   title: z.string().min(3, " Title must be at least 3 character"),
   description: z.string().min(2, " Description is required"),
@@ -7,6 +8,7 @@ export const createTaskSchema = z.object({
   due_date: z.string().datetime().optional(),
 });
 
+// Schema for task update
 export const updateTaskSchema = z.object({
   title: z.string().min(3).optional(),
   description: z.string().min(5).optional(),

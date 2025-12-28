@@ -11,8 +11,9 @@ dotenv.config();
 const app = express();
 
 app.use(cors());
-app.use(express.json());
 
+// Parse incomming JSON and form data
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
@@ -21,8 +22,10 @@ app.get("/", (req, res) => {
     .json({ status: "sucess", message: "smart task manager API is running" });
 });
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-app.use("/api/tasks", taskRoutes);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec)); // Swagger API documentation
+app.use("/api/tasks", taskRoutes); // API routes
+
+// Global error tandling middleware
 app.use(errHandler);
 
 export default app;
