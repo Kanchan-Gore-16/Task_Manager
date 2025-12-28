@@ -4,6 +4,7 @@ import 'package:smart_task_manager/features/task_api.dart';
 import 'package:smart_task_manager/features/task_api_provider.dart';
 import 'package:smart_task_manager/features/task_model.dart';
 
+import 'cors/connectivity_provider.dart';
 import 'home/task_filter_provider.dart';
 
 class TaskState {
@@ -88,6 +89,9 @@ class TaskNotifier extends StateNotifier<TaskState> {
     bool includeSummary = true,
     int? offsetOverride,
   }) async {
+    final isOffline = ref.read(isOfflineProvider);
+    if (isOffline) return;
+
     try {
       state = state.copyWith(loading: true, error: null);
 
@@ -131,6 +135,9 @@ class TaskNotifier extends StateNotifier<TaskState> {
     String? assignedTo,
     String? dueDate,
   }) async {
+    final isOffline = ref.read(isOfflineProvider);
+    if (isOffline) return;
+
     await api.createTask(
       title: title,
       description: description,
@@ -168,6 +175,8 @@ class TaskNotifier extends StateNotifier<TaskState> {
   }
 
   Future<void> deleteTask(String id) async {
+    final isOffline = ref.read(isOfflineProvider);
+    if (isOffline) return;
     try {
       state = state.copyWith(loading: true);
 
